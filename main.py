@@ -1,7 +1,11 @@
 import conf
 import discord
 
-client = discord.Client()
+# Настройки INTENTS
+intense = discord.Intents.default()
+intense.members = True
+
+client = discord.Client(intents = intense)
 
 @client.event
 async def on_message(message):
@@ -20,19 +24,29 @@ async def on_message(message):
 
 
     if message.channel.id == 825339475810582651:
-        msg = f'Hello, {message.author.name}! - your message {message.content}'
         # отправляем сообщение с send
         msg = None
 
 
-
+        ctx = message.content.split(" ",maxsplit = 1)
 
         if message.content == "/hello":
             msg = f'Hello, {message.author.name}. I am {client.user.name}'
-        elif message.content == "/about me":
-            msg = f'Your id {message.id}, your nickname {client.user.name}'
+
+        elif message.content == "/about_me":
+            msg = f'Hello, {message.author.name}. Your id is {client.user.id}'
+
+        elif ctx[0] ==  "/repeat":
+            msg = ctx[1]
 
 
+        elif message.content == "/get_members":
+            msg = "1"
+            if message.author.guild.name == "Bots":
+                for idx, member in list(enumerate(message.author.guild.members)):
+                    # 1. name
+                    msg += f'{idx+1}. {member.name}  { f"[{member.nick}]" if member.nick else "" } - {member.id}\n'
+        
 
         if msg != None:
             await message.channel.send(msg)
